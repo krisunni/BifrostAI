@@ -1,0 +1,31 @@
+@startuml
+title BifrostAI Architecture - RPi + Mac with Ollama & ChromaDB
+
+' Raspberry Pi
+node "Raspberry Pi (pi5)" {
+  [Hailo Inference Pipeline] --> [MQTT Broker]
+}
+
+' MacBook node
+node "MacBook" {
+
+  [ingest.py] --> [ChromaDB API] : Insert detection embeddings
+  [ingest.py] --> [Ollama Server API] : Embed detection JSON
+  [ingest.py] <-- [MQTT Broker] : Subscribe to /pi5/camera/1
+
+  [query.py] --> [ChromaDB API] : Query top N documents
+  [query.py] --> [Ollama Server API] : Embed question + answer generation
+  [Ollama Server API] --> [Ollama Model (phi3/mistral)]
+}
+
+actor User
+User --> [query.py] : Ask a question
+
+' Flow
+[Hailo Inference Pipeline] --> [MQTT Broker] : Publish JSON detections
+[MQTT Broker] --> [ingest.py] : Realtime detection messages
+
+[ChromaDB API] --> [query.py] : Matching context
+[query.py] --> [Ollama Server API] : Final answer prompt
+
+@enduml
