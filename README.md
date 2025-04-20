@@ -1,8 +1,9 @@
 # BifrostAI: Real-time Video Analysis with ChromaDB, Ollama & Vue UI
 
 BifrostAI ingests real-time video data from a Raspberry Pi 5 with AI HAT+, stores it in ChromaDB, and enables natural language querying through Ollama?all accessible via a modern Vue-based user interface.
-https://github.com/user-attachments/assets/7a3fc7e8-5050-4103-99ee-938c7afcd2ab
-![img.png](img.png)
+
+
+https://github.com/user-attachments/assets/152b8b8e-02b5-4fd8-b3be-56f3879a822f
 ## Components
 
 - **Backend (`backend.py`)**: A unified service that handles MQTT ingestion and querying from ChromaDB.
