@@ -1,15 +1,17 @@
-# BifrostAI: Real-time Video Analysis with ChromaDB & Ollama
+# BifrostAI: Real-time Video Analysis with ChromaDB, Ollama & Vue UI
 
-This project ingests video data from a Raspberry Pi 5 with AI HAT+, stores it in ChromaDB, and queries it using Ollama.
-
+BifrostAI ingests real-time video data from a Raspberry Pi 5 with AI HAT+, stores it in ChromaDB, and enables natural language querying through Ollama?all accessible via a modern Vue-based user interface.
+https://github.com/user-attachments/assets/7a3fc7e8-5050-4103-99ee-938c7afcd2ab
+![img.png](img.png)
 ## Components
 
-- **Ingest (`ingest.py`)**: Subscribes to an MQTT topic, ingests data (label, bbox, confidence, utc) into ChromaDB.
-- **Query (`query.py`)**: Queries ChromaDB and sends data to Ollama for natural language responses.
+- **Backend (`backend.py`)**: A unified service that handles MQTT ingestion and querying from ChromaDB.
+- **Frontend (Vue UI)**: A user interface for controlling ingestion and querying using natural language.
+- **MQTT Source**: The Raspberry Pi 5 with AI HAT+ publishes detection metadata (label, bounding box, confidence, timestamp) to an MQTT topic.
 
 ## Requirements
 
-Install dependencies:
+Install Python dependencies:
 
 ```bash
 pip install -r requirements.txt
@@ -17,9 +19,16 @@ pip install -r requirements.txt
 
 ### Dependencies:
 
-paho-mqtt: MQTT client
-chromadb: ChromaDB interaction
-requests: HTTP requests to Ollama
+Python Dependencies
+* paho-mqtt~=1.6.1: MQTT client for receiving messages
+* chromadb~=0.6.2: Local vector database for storage and similarity search
+* requests~=2.28.2: HTTP requests to interact with Ollama
+* sentence-transformers: Embedding model for encoding data
+* langchain~=0.3.21: Language model orchestration framework
+* langchain-community~=0.3.20: Community-contributed LangChain tools
+* langchain-core: Core interfaces and utilities for LangChain
+* langchainhub: Model and chain registry for LangChain
+* Flask~=2.3.3: Web server for backend API
 
 # Setup on Raspberry Pi 5
 To get started with the Raspberry Pi AI HAT+, follow the installation instructions from the official documentation here: [AI HAT+ Setup](https://www.raspberrypi.com/documentation/accessories/ai-hat-plus.html#ai-hat-plus-installation)
@@ -67,21 +76,37 @@ With the virtual environment activated, install the required dependencies by run
 pip install -r requirements.txt
 ```
 
-Step 3: Run the Ingest Script
-To start ingesting data from the Raspberry Pi, run:
-
 ```bash
-python ingest.py
+python backend.py
 ````
-This script will listen to MQTT and store the received data in ChromaDB.
+This script subscribes to the MQTT topic and stores data in ChromaDB. It also exposes REST endpoints for querying.
 
-Step 4: Run the Query Script
-To query the stored data using natural language, run:
+Step 4: Running the Vue UI
+Navigate to the frontend directory:
 
 ```bash
-python query.py
+cd frontend
+npm install
+npm run dev
 ```
-You will be prompted to enter a question. For example:
+The UI will be available at http://localhost:5173.
+
 ```bash
-Ask a question: What was detected in the most recent image?
+Ask a question: Last time you saw a person
 ```
+I have included sample chromadb data to test without Rpi.
+
+
+##  Features
+- Start or stop the MQTT ingestion from the UI
+- Monitor ingestion status (Running / Stopped)
+- Ask natural language questions such as:
+
+- What was detected in the most recent image?
+- Sample Data Support: Test the application without a Raspberry Pi using preloaded ChromaDB sample data
+
+# Example Workflow
+1. Power on your Raspberry Pi with AI HAT+ and start the MQTT publisher script
+2. Launch the backend service using python backend.py
+3. Start the frontend Vue UI using npm run dev
+4. Use the browser UI to monitor ingestion and query detected data
